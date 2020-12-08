@@ -1,0 +1,1 @@
+"""Funtctions that promise to have usefulness for more than one challenge, or even project"""

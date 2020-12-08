@@ -1,0 +1,4 @@
+/.env
+/.pylintrc
+/.vscode
+/__init__.py
