@@ -1,72 +1,31 @@
-import advent_of_code_data as data
+import numpy as np
 
-boarding = data.d5_input
-
-def row(boarding):
-    boarding = boarding[:7]
-    row = [i for i in range(128)]
-    for letter in boarding:
-        cut = int(len(row)/2)
-        if letter == "B":
-            row = row[cut:]
-        else:
-            row = row[:cut]
-    return row[0]
-
-
-
-def column(boarding):
-    boarding = boarding[7:]
-    column = [i for i in range(8)]
-    for letter in boarding:
-        cut = int(len(column)/2)
-        if letter == "R":
-            column = column[cut:]
-        else:
-            column = column[:cut]
-    return column[0]
-
-def max_seat_id(seats):
-    max_seat = 0
-    seat_ids = []
-    for seat in seats:
-        seat_id = seat[0]*8 + seat[1]
-        if seat_id > max_seat:
-            max_seat = seat_id
-    return max_seat
-
-def seat_id(seats):
-    seat_ids = []
-    for seat in seats:
-        seat_id = seat[0]*8 + seat[1]
-        if seat_id > max_seat:
-            max_seat = seat_id
-    return max_seat
-
-def boarding_complete(boarding):
-    seats = []
-    for boarding in boarding:
-        seat = []
-        seat.append(row(boarding))
-        seat.append(column(boarding))
-        seats.append(seat)
-    
-    print(max_seat_id(seats))
-    return seats
-
-def boarding_id(seats):
-    id_list = [seat[0]*8 + seat[1] for seat in seats]
-    id_list.sort()
-    all_ids = [i for i in range(id_list[0], id_list[-1]+1)]
-    for i in range(len(all_ids)):
-        if id_list[i] != all_ids[i]:
-            print(all_ids[i])
-            break
+def load_list(filepath, slice):
+    integer_list = []
+    with open(filepath) as file:
+        content = file.read().splitlines()
+        for line in content:
+            line1, line2 = line[:slice], line[slice:]
+            # Convert first to a true binary string and then directly to a an integer base 10
+            line1 = line1.replace("F", "0").replace("B", "1")
+            line1 = int(line1, 2)
+            line2 = int(line2.replace("L", "0").replace("R", "1"), 2)
+            integer_list.append([line1, line2])
+    return integer_list
 
 
-boarding_id(boarding_complete(boarding))
+b = load_list(".\\data\\2020_05.txt", 7)
+b = np.array(b)
 
+seat_ids = b[:,0]*8+b[:,1]
+print(seat_ids.max())
 
+min_seat = seat_ids.min()
 
+# use the formula for continous sums (n+1)n/2 to find the missing value
 
+should = len(seat_ids) * (len(seat_ids)+1) / 2
 
+my_seat = should - sum(seat_ids - min_seat) + min_seat
+
+print(int(my_seat))
