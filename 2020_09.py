@@ -1,13 +1,5 @@
+from lbrinks_helpers import load_to_list
 import numpy as np
-
-def load_to_list(filepath, fun):    
-    with open(filepath) as file:
-        output = []
-        content = file.read().splitlines()
-        instructions = []
-        for line in content:
-            output.append(fun(line))
-        return output
 
 def XMAS(xmas, preamble):
     for i in range(preamble, len(xmas)):
