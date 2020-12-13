@@ -8,3 +8,14 @@ def load_to_list(file, fun = None):
             return content
         output = [fun(line) for line in content]
         return output
+
+
+def load_instruction_list(filepath, sep=" ", fun=int):
+    """Generates a list of 2 item lists, containing string-fun pairs, sepearated at sep."""    
+    with open(filepath) as file:
+        content = file.read().splitlines()
+        instructions = []
+        for line in content:
+            instruction, value = line.split(sep= sep)
+            instructions.append([instruction, fun(value)])
+        return instructions
