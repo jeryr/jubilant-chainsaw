@@ -1,5 +1,4 @@
 from lbrinks_helpers import load_to_list
-from itertools import product
 import logging
 
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s:%(message)s')
