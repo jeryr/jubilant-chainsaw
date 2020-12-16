@@ -2,6 +2,7 @@ from lbrinks_helpers import load_to_list
 import numpy as np
 import math
 
+
 def rotate(heading, degrees):
     """Returns the heading turned counter-clockwise by degrees"""
     radians = math.radians(degrees)
@@ -11,15 +12,16 @@ def rotate(heading, degrees):
     # the second part experienced trouble without rounding here.
     return round(xx), round(yy)
 
+
 def move_ship(course):
     position = np.array([0, 0])
-    heading = np.array([0,1])
-    move ={
-        "F":heading,
-        "N":np.array([1,0]),
-        "S":np.array([-1,0]),
-        "E":np.array([0,1]),
-        "W":np.array([0,-1])
+    heading = np.array([0, 1])
+    move = {
+        "F": heading,
+        "N": np.array([1, 0]),
+        "S": np.array([-1, 0]),
+        "E": np.array([0, 1]),
+        "W": np.array([0, -1])
     }
     for i in course:
         if i[0] == "L":
@@ -31,15 +33,16 @@ def move_ship(course):
         position += move[i[0]]*i[1]
     print(np.abs(position).sum())
 
+
 def move_waypoint(course):
     waypoint = np.array([1, 10])
-    position = np.array([0,0])
-    move ={
-        "N":np.array([1,0]),
-        "S":np.array([-1,0]),
-        "E":np.array([0,1]),
-        "W":np.array([0,-1])
-    } 
+    position = np.array([0, 0])
+    move = {
+        "N": np.array([1, 0]),
+        "S": np.array([-1, 0]),
+        "E": np.array([0, 1]),
+        "W": np.array([0, -1])
+    }
     for i in course:
         if i[0] == "L":
             waypoint[0], waypoint[1] = rotate(waypoint, i[1])
@@ -52,6 +55,7 @@ def move_waypoint(course):
             continue
         waypoint += move[i[0]]*i[1]
     print(np.abs(position).sum())
+
 
 course = load_to_list(".\\data\\2020_12.txt")
 course = [[i[0], int(i[1:])] for i in course]

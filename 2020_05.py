@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def load_list(filepath, slice):
     integer_list = []
     with open(filepath) as file:
@@ -17,7 +18,7 @@ def load_list(filepath, slice):
 b = load_list(".\\data\\2020_05.txt", 7)
 b = np.array(b)
 
-seat_ids = b[:,0]*8+b[:,1]
+seat_ids = b[:, 0]*8+b[:, 1]
 print(seat_ids.max())
 
 min_seat = seat_ids.min()

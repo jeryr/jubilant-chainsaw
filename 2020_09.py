@@ -1,21 +1,24 @@
 from lbrinks_helpers import load_to_list
 import numpy as np
 
+
 def XMAS(xmas, preamble):
     for i in range(preamble, len(xmas)):
-        if has_sum(xmas[i],xmas[i-preamble:i]):
+        if has_sum(xmas[i], xmas[i-preamble:i]):
             continue
         else:
             print(xmas[i])
             return xmas[i]
 
+
 def has_sum(x, code):
     for i in range(len(code)):
         for j in range(i+1, len(code)):
-            if code[i] + code[j] == x :
-                return True 
+            if code[i] + code[j] == x:
+                return True
     return False
-        
+
+
 def weakness(xmas, x):
     for i in range(len(xmas)):
         t = xmas[i]
@@ -26,7 +29,7 @@ def weakness(xmas, x):
                 print(i)
                 print(j-1)
                 return(solution.max() + solution.min())
-            t += xmas[j] 
+            t += xmas[j]
             j += 1
 
 

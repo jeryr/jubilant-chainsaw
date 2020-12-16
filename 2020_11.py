@@ -1,7 +1,8 @@
 from lbrinks_helpers import load_to_list
 import numpy as np
-# this problems requires on go to determine the changes, and one to apply the changes. if you change in place, the puzzle doesn't work. 
-# perhaps use numpy matrices, represent taken seats as 1, free seats as -1 and floor as 0. then elementwise changes can be performed by multiplying, *-1 for a change. if the changing matrix stays all ones, there is an equilibrium. 
+# this problems requires on go to determine the changes, and one to apply the changes. if you change in place, the puzzle doesn't work.
+# perhaps use numpy matrices, represent taken seats as 1, free seats as -1 and floor as 0. then elementwise changes can be performed by multiplying, *-1 for a change. if the changing matrix stays all ones, there is an equilibrium.
+
 
 def seating_to_matrix(seating):
     """Transforms the list of string to a matrix, and adds a row and column of floor to the end"""
@@ -11,32 +12,27 @@ def seating_to_matrix(seating):
     seating = np.array(matrix)
     return seating
 
-# these next two should be combined into on function
-def will_be_vacated(seating, row=91, column=97):
-    """Checks wether a seat will be vacated in the next round"""
-    vacated = np.ones(seating.shape)
-    easy = np.where(seating == -1, 0, seating)
-    for r in range(1, row):
-        for c in range(1, column):
-            if easy[r,c] == 0:
-                continue
-            # this needs to be one higher than the specified 4, since the own seat is counted
-            if easy[r-1:r+2, c-1:c+2].sum() >= 5:
-                vacated[r,c] = -1
-    return vacated.astype(np.int32)
 
-def will_be_occupied(seating, row=91, column=97):
-    """Checks wether a seat will be occupied in the next round"""
-    occupied = np.ones(seating.shape)
+def transformer(seating, row=91, column=97):
+    """Returns a transformator matrix that multiplicatively changes the seating area to the next round (part 1)"""
+    transform = np.ones(seating.shape)
     easy = np.where(seating == -1, 0, seating)
     for r in range(1, row):
         for c in range(1, column):
-            if seating[r,c] == -1:
+            if seating[r, c] == 1:
+                # this needs to be one higher than the specified 4, since the own seat is counted
+                if easy[r-1:r+2, c-1:c+2].sum() >= 5:
+                    transform[r, c] = -1
+            elif seating[r, c] == -1:
                 if easy[r-1:r+2, c-1:c+2].sum() == 0:
-                    occupied[r,c] = -1
-    return occupied.astype(np.int32)
+                    transform[r, c] = -1
+            else:
+                continue
+    return transform.astype(np.int32)
+
 
 # this approach no longer works for part two. no we have to check the next most adjacent seat in each direction. seat[c,c]. Also we now have to handle out of index errors. This isn't the most elegant solution, but...
+
 
 def occupied_around(seating, row, column, row_max=91, column_max=97):
     """Returns the amount of taken seats that can be seen from the specified seat"""
@@ -57,20 +53,20 @@ def occupied_around(seating, row, column, row_max=91, column_max=97):
             break
     # right
     for c in range(column+1, column_max):
-       if seating[row, c] == -1:
-           break
-       if seating[row, c] == 1:
+        if seating[row, c] == -1:
+            break
+        if seating[row, c] == 1:
             adjacent_view += 1
-            break 
+            break
     # left
     for c in range(column-1, 0, -1):
         if seating[row, c] == -1:
             break
         if seating[row, c] == 1:
             adjacent_view += 1
-            break 
+            break
     # down-right
-    for r in range(row+1, row_max): 
+    for r in range(row+1, row_max):
         try:
             if seating[r, column+r-row] == -1:
                 break
@@ -80,7 +76,7 @@ def occupied_around(seating, row, column, row_max=91, column_max=97):
         except IndexError:
             break
     # up-right
-    for r in range(row-1, 0, -1): 
+    for r in range(row-1, 0, -1):
         try:
             if seating[r, column-r+row] == -1:
                 break
@@ -90,7 +86,7 @@ def occupied_around(seating, row, column, row_max=91, column_max=97):
         except IndexError:
             break
     # down-left
-    for r in range(row+1, row_max): 
+    for r in range(row+1, row_max):
         if column-r+row == 0:
             break
         try:
@@ -102,7 +98,7 @@ def occupied_around(seating, row, column, row_max=91, column_max=97):
         except IndexError:
             break
     # up-left
-    for r in range(row-1, 0, -1): 
+    for r in range(row-1, 0, -1):
         if column+r-row == 0:
             break
         try:
@@ -115,97 +111,9 @@ def occupied_around(seating, row, column, row_max=91, column_max=97):
             break
     return adjacent_view
 
-def occupied_around_debug(seating, row, column, row_max=11, column_max=11):
-    """Returns the amount of taken seats that can be seen from the specified seat"""
-    adjacent_view = 0
-    # down
-    for r in range(row+1, row_max):
-        if seating[r, column] == -1:
-            break
-        if seating[r, column] == 1:
-            adjacent_view += 1
-            print("down")
-            break
-    # up
-    for r in range(row-1, 0, -1):
-        print(r)
-        if seating[r, column] == -1:
-            break
-        if seating[r, column] == 1:
-            adjacent_view += 1
-            print("up")
-            break
-    # right
-    for c in range(column+1, column_max):
-       if seating[row, c] == -1:
-           break
-       if seating[row, c] == 1:
-            adjacent_view += 1
-            print("right")
-            break 
-    # left
-    for c in range(column-1, 0, -1):
-        if seating[row, c] == -1:
-            break
-        if seating[row, c] == 1:
-            adjacent_view += 1
-            print("left")
-            break 
-    # down-right
-    for r in range(row+1, row_max): 
-        try:
-            if seating[r, column+r-row] == -1:
-                break
-            if seating[r, column+r-row] == 1:
-                adjacent_view += 1
-                print("down_right")
-                break
-        except IndexError:
-            break
-    # up-right
-    for r in range(row-1, 0, -1): 
-        try:
-            if seating[r, column-r+row] == -1:
-                break
-            if seating[r, column-r+row] == 1:
-                adjacent_view += 1
-                print("up_right")
-                break
-        except IndexError:
-            break
-    # down-left
-    for r in range(row+1, row_max): 
-        if column-r+row == 0:
-            break
-        try:
-            print(r, column-r+row)
-            if seating[r, column-r+row] == -1:
-                break
-            if seating[r, column-r+row] == 1:
-                adjacent_view += 1
-                print("upped")
-                print(r, column-r+row)
-                print("down_left")
-                break
-        except IndexError:
-            break
-    # up-left
-    for r in range(row-1, 0, -1): 
-        if column+r-row == 0:
-            break
-        try:
-            if seating[r, column+r-row] == -1:
-                break
-            if seating[r, column+r-row] == 1:
-                adjacent_view += 1
-                print(r, column-r+row)
-                print("up_left")
-                break
-        except IndexError:
-            break
-    return adjacent_view
-    
-def change(seating, row = 91, column = 97):
+
+def change(seating, row=91, column=97):
+    """Returns the transformative matrix according to rules in part 2"""
     changing = np.ones(seating.shape)
     for r in range(1, row):
         for c in range(1, column):
@@ -219,28 +127,18 @@ def change(seating, row = 91, column = 97):
     return changing.astype(np.int32)
 
 
-
+def find_equilibrium(seatings, method):
+    """Applies the specified method on the seating area, until no more changes occur and prints the sum of occupied seats"""
+    seating = seatings.copy()
+    condition = np.ones(seating.shape)
+    transformator = np.zeros(seating.shape)
+    while np.any(transformator != condition):
+        transformator = method(seating)
+        seating *= transformator
+    print(seating[seating == 1].sum())
 
 
 seating = seating_to_matrix(load_to_list(".\\data\\2020_11.txt"))
-test_case = seating_to_matrix(load_to_list(".\\data\\2020_11_test.txt")) 
 
-condition = np.ones(seating.shape)
-transformator = np.zeros(seating.shape)
-
-
-while np.any(transformator != condition):
-    transformator = will_be_occupied(seating) * will_be_vacated(seating)
-    seating *= transformator
-
-print(np.where(seating == -1, 0, seating).sum())
-
-transformator = np.zeros(seating.shape)
-seating = seating_to_matrix(load_to_list(".\\data\\2020_11.txt"))
-
-
-while np.any(transformator != condition):
-     transformator = change(seating)
-     seating *=transformator
-
-print(np.where(seating == -1, 0, seating).sum())
+find_equilibrium(seating, transformer)
+find_equilibrium(seating, change)

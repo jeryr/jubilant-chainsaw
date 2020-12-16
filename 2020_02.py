@@ -1,9 +1,3 @@
-import advent_of_code_data as data
-
-pwds = data.d2_input
-test = data.d2_test
-print(test)
-
 def pwd_valid_sledge(pwd_list):
     valid_pwds = 0
     for pwd in pwd_list:
@@ -15,7 +9,8 @@ def pwd_valid_sledge(pwd_list):
         if least <= occurences <= most:
             valid_pwds += 1
     print(f"There were {valid_pwds} valid passwords")
-           
+
+
 def pwd_valid_toboggan(pwd_list):
     valid_pwds = 0
     for pwd in pwd_list:
@@ -27,12 +22,21 @@ def pwd_valid_toboggan(pwd_list):
         valid += password.count(character, p1, p1+1)
         valid += password.count(character, p2, p2+1)
         if valid == 1:
-            valid_pwds += 1 
+            valid_pwds += 1
     print(f"There were {valid_pwds} valid passwords")
-           
 
-pwd_valid_sledge(test)
+
+def pwd_seperator(line):
+    a, b, pwd = line.split()
+    low, high = a.split("-")
+    character = b[0]
+    return [int(low), int(high), character, pwd]
+
+
+with open(".\\data\\2020_02.txt") as file:
+    content = file.read().splitlines()
+
+pwds = [pwd_seperator(line) for line in content]
+
 pwd_valid_sledge(pwds)
-
-pwd_valid_toboggan(test)
 pwd_valid_toboggan(pwds)

@@ -12,16 +12,19 @@ def decoder_v_1(instructions):
         if parts[0].startswith("mem"):
             address = parts[0][4: -1]
             mem[address] = bitmask(parts[2], mask)
-        else:    
+        else:
             mask = parts[2]
 
     print(sum([mem[address] for address in mem]))
 
-def bitmask(value, mask, unchanged ="X"):
+
+def bitmask(value, mask, unchanged="X"):
     bits = list(bin(int(value))[2:].zfill(36))
     test = "".join(bits)
-    new_value = [bits[i] if mask[i]==unchanged else mask[i] for i in range(36)]
+    new_value = [bits[i] if mask[i] == unchanged else mask[i]
+                 for i in range(36)]
     return int("".join(new_value), 2)
+
 
 def floating_bits(address, mask):
     adresses = []
@@ -44,6 +47,7 @@ def floating_bits(address, mask):
     logging.debug(f"masks: {adresses}")
     return adresses
 
+
 def decoder_v_2(instructions):
     mem = {}
     for line in instructions:
@@ -54,12 +58,13 @@ def decoder_v_2(instructions):
             logging.info(f"{addresses}")
             for a in addresses:
                 mem[a] = parts[2]
-        else:    
+        else:
             mask = parts[2]
-    
+
     print("Solution")
     print(sum([int(mem[address]) for address in mem]))
     return mem
+
 
 instructions = load_to_list(".\\data\\2020_14.txt")
 

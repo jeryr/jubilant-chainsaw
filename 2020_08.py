@@ -1,5 +1,6 @@
 from lbrinks_helpers import load_instruction_list
 
+
 def read_instruction(instruction):
     """Returns the relative position of the next instruction and the change for accumulation"""
     instruction, value = instruction[0], instruction[1]
@@ -8,7 +9,8 @@ def read_instruction(instruction):
     if instruction == "jmp":
         return value, 0
     if instruction == "acc":
-       return 1, value
+        return 1, value
+
 
 def generate_lists(instructions):
     """Yields all lists, in which one nop <=> jmp conversion has taken place."""
@@ -16,11 +18,12 @@ def generate_lists(instructions):
         if instructions[i][0] == "acc":
             continue
         if instructions[i][0] == "nop":
-            yield [instructions[j] if j != i else ["jmp", instructions[j][1]] for j  in range(len(instructions))]
+            yield [instructions[j] if j != i else ["jmp", instructions[j][1]] for j in range(len(instructions))]
         if instructions[i][0] == "jmp":
-            yield [instructions[j] if j != i else ["nop", instructions[j][1]] for j  in range(len(instructions))]
+            yield [instructions[j] if j != i else ["nop", instructions[j][1]] for j in range(len(instructions))]
 
-def find_loop(instructions, check_for_endless = False):
+
+def find_loop(instructions, check_for_endless=False):
     """Prints and returns the value in the accumulation variable. If check_for_endless it only prints this value and return True if there was no endless loop."""
     accumulation = 0
     used = []
